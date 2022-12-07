@@ -1,0 +1,17 @@
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\bin\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.exe
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\bin\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.deps.json
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\bin\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.runtimeconfig.json
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\bin\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.dll
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\bin\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.pdb
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.csproj.AssemblyReference.cache
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.Form1.resources
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.csproj.GenerateResource.cache
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.AssemblyInfoInputs.cache
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.AssemblyInfo.cs
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.csproj.CoreCompileInputs.cache
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.dll
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\refint\CS_WinForms_SimpleHttpServer.dll
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.pdb
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\CS_WinForms_SimpleHttpServer.genruntimeconfig.cache
+C:\Users\devel\Desktop\CS_WinForms_SimpleHttpServer\CS_WinForms_SimpleHttpServer\obj\Debug\net6.0-windows\ref\CS_WinForms_SimpleHttpServer.dll
