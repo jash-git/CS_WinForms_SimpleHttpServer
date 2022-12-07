@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Reflection;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace CS_WinForms_SimpleHttpServer
@@ -8,6 +10,9 @@ namespace CS_WinForms_SimpleHttpServer
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Ver : " + FileVersionInfo.GetVersionInfo(Assembly.
+                GetExecutingAssembly().Location).FileVersion + string.Format("Version {0}", FileVersionInfo.
+                GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString()); ;
         }
 
         private void button1_Click(object sender, EventArgs e)

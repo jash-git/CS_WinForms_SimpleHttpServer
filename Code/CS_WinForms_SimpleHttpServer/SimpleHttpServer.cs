@@ -9,14 +9,7 @@ using System.Drawing;
 
 namespace CS_WinForms_SimpleHttpServer
 {
-    /*
-    public interface IHttpServer
-    {
-        void Start();
-        void Stop();
-    }
-    */
-    public class HttpServer// : IHttpServer
+    public class HttpServer
     {
         public bool blnRun;
         private TcpListener listener;
