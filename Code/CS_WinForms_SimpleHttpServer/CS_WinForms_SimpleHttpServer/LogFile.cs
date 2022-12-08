@@ -33,29 +33,39 @@ namespace CS_WinForms_SimpleHttpServer
 
         //public static string m_StrSysPath = System.Windows.Forms.Application.StartupPath;// .net 4X - Forms
         //public static string m_StrSysPath = AppDomain.CurrentDomain.BaseDirectory;// .net 4X - Console
-		public static string m_StrSysPath = Directory.GetCurrentDirectory()+"\\"; 
+		public static string m_StrSysPath = Directory.GetCurrentDirectory()+"\\";
+        private static ReaderWriterLockSlim _readWriteLock = new ReaderWriterLockSlim();//https://johandorper.com/log/thread-safe-file-writing-csharp
         public static void Write(String StrData, bool blnAutoTime = true)
         {
-            String StrLogPath = m_StrSysPath + "Log";
-            String StrFileName = StrLogPath+String.Format("\\{0}.log", DateTime.Now.ToString("yyyyMMdd"));
-
-            if (!Directory.Exists(StrLogPath))
+            _readWriteLock.EnterWriteLock();
+            try
             {
-                Directory.CreateDirectory(StrLogPath);
-            }
+                String StrLogPath = m_StrSysPath + "Log";
+                String StrFileName = StrLogPath + String.Format("\\{0}.log", DateTime.Now.ToString("yyyyMMdd"));
 
-            FileStream fs = new FileStream(StrFileName, FileMode.Append);
-            StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
-            if (blnAutoTime == true)
-            {
-                sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff => ") + StrData);// 寫入文字
-            }
-            else
-            {
-                sw.WriteLine(StrData);// 寫入文字
-            }
+                if (!Directory.Exists(StrLogPath))
+                {
+                    Directory.CreateDirectory(StrLogPath);
+                }
 
-            sw.Close();// 關閉串流
+                FileStream fs = new FileStream(StrFileName, FileMode.Append);
+                StreamWriter sw = new StreamWriter(fs, Encoding.UTF8);
+                if (blnAutoTime == true)
+                {
+                    sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff => ") + StrData);// 寫入文字
+                }
+                else
+                {
+                    sw.WriteLine(StrData);// 寫入文字
+                }
+
+                sw.Close();// 關閉串流
+            }
+            finally
+            {
+                // Release lock
+                _readWriteLock.ExitWriteLock();
+            }
         }
     }
 }
