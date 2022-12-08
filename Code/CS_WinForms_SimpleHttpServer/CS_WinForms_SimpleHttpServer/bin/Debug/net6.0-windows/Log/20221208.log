@@ -1,0 +1,266 @@
+﻿2022-12-08 14:43:39:173 => IP : 192.168.1.108
+Type: POST
+Path: /jashliao
+Var: HTTP/1.1
+Input: <methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>
+result: {"NO":"0000","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:43:40:179 => IP : 192.168.1.108
+Type: POST
+Path: /jashliao
+Var: HTTP/1.1
+Input: <methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>
+result: {"NO":"0001","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:43:41:169 => IP : 192.168.1.108
+Type: POST
+Path: /jashliao
+Var: HTTP/1.1
+Input: <methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>
+result: {"NO":"0002","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:43:42:177 => IP : 192.168.1.108
+Type: POST
+Path: /jashliao
+Var: HTTP/1.1
+Input: <methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>
+result: {"NO":"0003","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:44:13:533 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0004","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:45:17:346 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0005","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:20:562 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0006","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:45:330 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0007","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:54:219 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0008","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:55:026 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0009","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:55:514 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0010","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:56:050 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0011","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:56:498 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0012","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:56:882 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0013","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:57:098 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0014","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:57:282 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0015","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:57:458 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0016","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:57:650 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0017","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:57:834 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0018","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:58:034 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0019","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:58:234 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0020","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:58:442 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0021","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:58:650 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0022","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:58:850 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0023","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:59:058 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0024","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:59:258 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0025","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:59:465 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0026","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:59:666 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0027","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:50:59:866 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0028","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:00:066 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0029","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:00:362 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0030","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:00:595 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0031","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:00:786 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0032","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:00:979 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0033","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:01:170 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0034","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:01:362 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0035","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:01:539 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0036","En_Name":"jash.liao","CH_Name":"小廖"}
+
+2022-12-08 14:51:01:714 => IP : 192.168.1.108
+Type: POST
+Path: /test/post.php
+Var: HTTP/1.0
+Input: 
+result: {"NO":"0037","En_Name":"jash.liao","CH_Name":"小廖"}
+
