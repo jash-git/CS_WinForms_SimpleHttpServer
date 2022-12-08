@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CS_WinForms_SimpleHttpServer
 {
@@ -40,6 +41,25 @@ namespace CS_WinForms_SimpleHttpServer
                 this.listener = null;
             }
         }
+
+        //---
+        //單純只針對非英數字(中文字)部分轉Unicode編碼
+        static string StringToUnicode(string text)
+        {
+            //https://www.cnblogs.com/sntetwt/p/11218087.html
+            string result = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                if ((int)text[i] > 32 && (int)text[i] < 127)
+                {
+                    result += text[i].ToString();
+                }
+                else
+                    result += string.Format("\\u{0:x4}", (int)text[i]);
+            }
+            return result;
+        }
+        //---單純只針對非英數字(中文字)部分轉Unicode編碼
 
         //---
         //得到用戶IP和PORT ~https://blog.51cto.com/yerik/493795
@@ -97,7 +117,16 @@ namespace CS_WinForms_SimpleHttpServer
                 if (stream.CanRead)
                 {
                     buffer = new byte[client.ReceiveBufferSize];
-                    int numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
+                    int numBytesRead = 0;
+                    try
+                    {
+                        numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
+                    }
+                    catch
+                    {
+                        client = null;
+                        continue;
+                    }
                     byte[] bytesRead = new byte[numBytesRead];
                     Array.Copy(buffer, bytesRead, numBytesRead);
                     StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
@@ -130,8 +159,9 @@ namespace CS_WinForms_SimpleHttpServer
                     StrLogData += $"Input: {StrInputData}\n";
                 }
 
-                String result = String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO);//@"{""NO"":""001"",""En_Name"":""jash.liao"",""CH_Name"":""小廖""}";               
-
+                String result = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));               
+                //String result = String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO);
+                
                 NO++;
 
                 stream.Write(
