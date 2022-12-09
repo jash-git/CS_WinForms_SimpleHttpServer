@@ -30,6 +30,7 @@
         {
             this.button1 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // button1
@@ -50,15 +51,28 @@
             this.richTextBox1.TabIndex = 1;
             this.richTextBox1.Text = "";
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "GET",
+            "POST"});
+            this.comboBox1.Location = new System.Drawing.Point(129, 14);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(151, 27);
+            this.comboBox1.TabIndex = 2;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(928, 447);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 
         }
@@ -67,5 +81,6 @@
 
         private Button button1;
         private RichTextBox richTextBox1;
+        private ComboBox comboBox1;
     }
 }

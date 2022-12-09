@@ -30,9 +30,9 @@ namespace CS_WinForms_HttpCleint
             {
 
                 // request line
-                networkStream.Write(Encoding.UTF8.GetBytes("POST /test/post.php HTTP/1.0\r\n"));
+                networkStream.Write(Encoding.UTF8.GetBytes($"{comboBox1.SelectedItem.ToString()} /test/post.php HTTP/1.0\r\n"));
 
-                String StrInput = @"<methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>";
+                String StrInput = (comboBox1.SelectedItem.ToString()=="POST") ? @"<methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>":"";
                 // headers
                 networkStream.Write(Encoding.UTF8.GetBytes("Host: 192.168.1.108\r\n"));
                 networkStream.Write(Encoding.UTF8.GetBytes("Content-Type: text/xml\r\n"));
@@ -52,6 +52,11 @@ namespace CS_WinForms_HttpCleint
                     richTextBox1.Text = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);
                 }
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            comboBox1.SelectedIndex = 0;
         }
     }
 }

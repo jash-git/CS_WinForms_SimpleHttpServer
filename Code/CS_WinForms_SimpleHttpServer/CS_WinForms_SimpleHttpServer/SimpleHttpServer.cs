@@ -19,10 +19,12 @@ namespace CS_WinForms_SimpleHttpServer
     {
         public bool blnRun;
         private TcpListener listener;
+        private int intport;
         private static int NO;
 
         public HttpServer(int port)
         {
+            intport = port;
             try
             {
                 this.listener = new TcpListener(port);
@@ -51,11 +53,13 @@ namespace CS_WinForms_SimpleHttpServer
             {
                 this.blnRun = true;
                 this.listener.Start();
+                LogFile.Write($"Server Start(Listen port:{intport})");
             }
             catch
             {
                 this.blnRun = false;
                 this.listener = null;
+                LogFile.Write($"Server Start(Listen port:{intport}) Error");
                 return;
             }
 
@@ -88,13 +92,18 @@ namespace CS_WinForms_SimpleHttpServer
             bool blnResult = false;
             if (client == null)
             {
-                LogFile.Write("TcpClient Object Error");
+                LogFile.Write("Get TcpClient Object Error");
                 return blnResult;
             }
 
             byte[] buffer;
             String incomingMessage = "";
             NetworkStream stream = client.GetStream();
+            if (stream == null)
+            {
+                LogFile.Write("Get TcpClient Stream Error");
+                return blnResult;
+            }
             String StrLogData = "";
             String StrInputData = "";
 
@@ -119,9 +128,9 @@ namespace CS_WinForms_SimpleHttpServer
                 Array.Copy(buffer, bytesRead, numBytesRead);
                 incomingMessage = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);//HTTP head + data
                 string[] strs = incomingMessage.Split("\n");
-                if((strs==null) || (strs.Length<2))
+                if((strs==null) || (strs.Length<1))
                 {
-                    LogFile.Write("Http Stream Data Error");
+                    LogFile.Write("TcpClient Stream Data Error");
                     return blnResult;
                 }
 
@@ -170,7 +179,7 @@ namespace CS_WinForms_SimpleHttpServer
             }
             else
             {
-                LogFile.Write("TcpClient Access Error");
+                LogFile.Write("TcpClient Stream Access Error");
                 return blnResult;
             }
 
@@ -219,9 +228,18 @@ namespace CS_WinForms_SimpleHttpServer
             bool blnResult = false;
             if((StrType.Length>0) && (StrPath.Length>0))
             {
-                blnResult = true;
-                StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
-                NO++;
+                switch(StrType)
+                {
+                    case "POST":
+                        blnResult = true;
+                        StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
+                        NO++;
+                        break;
+                    default:
+                        blnResult = false;
+                        break;
+                }
+
             }
             return blnResult;
         }
