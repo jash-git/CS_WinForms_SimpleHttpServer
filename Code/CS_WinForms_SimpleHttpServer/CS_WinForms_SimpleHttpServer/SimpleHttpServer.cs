@@ -50,14 +50,16 @@ namespace CS_WinForms_SimpleHttpServer
         {
             NO = 0;
             try
-            {
+            {              
                 this.blnRun = true;
+                HttpServerThread.State = 1;
                 this.listener.Start();
                 LogFile.Write($"Server Start(Listen port:{intport})");
             }
             catch
             {
                 this.blnRun = false;
+                HttpServerThread.State = 1;
                 this.listener = null;
                 LogFile.Write($"Server Start(Listen port:{intport}) Error");
                 return;
@@ -291,17 +293,33 @@ namespace CS_WinForms_SimpleHttpServer
         private static HttpServer Server = null;
         private static int Port;
         private static Thread t;
+        public static int State;
         public static bool Start(int port)
         {
+            if(t!=null)
+            {
+                t = null;
+            }
+            if(Server != null)
+            {
+                Server.Stop();
+                Server = null;
+            }
+
+            State = 0;
             bool blnResult = false;
             t = new Thread(Create);
             t.IsBackground = true;
             t.Start(port);
-            Thread.Sleep(1000);
-            if (Server != null)
+
+            do
             {
-                blnResult = Server.blnRun;
-            }
+                if (Server != null)
+                {
+                    blnResult = Server.blnRun;
+                }
+            } while (State == 0);
+
             return blnResult;
         }
         public static void Create(object arg)//Run(object arg)
