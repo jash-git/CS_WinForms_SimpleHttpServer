@@ -4,13 +4,14 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
+using System.IO;
+using static System.Net.WebRequestMethods;
 
 namespace CS_WinForms_SimpleHttpServer
 {
@@ -41,6 +42,188 @@ namespace CS_WinForms_SimpleHttpServer
                 this.listener.Stop();
                 this.listener = null;
             }
+        }
+
+        public void Start()
+        {
+            NO = 0;
+            try
+            {
+                this.blnRun = true;
+                this.listener.Start();
+            }
+            catch
+            {
+                this.blnRun = false;
+                this.listener = null;
+                return;
+            }
+
+            while (blnRun)
+            {
+                TcpClient client;
+                try
+                {
+                    client = this.listener.AcceptTcpClient();
+                    HttpClientResponse(client);
+                }
+                catch
+                {
+                    if(blnRun)
+                    {
+                        LogFile.Write("Server Error");
+                    }
+                    else
+                    {
+                        LogFile.Write("Server STOP");
+                        break;
+                    }
+                }
+
+            }
+        }
+
+        public static bool HttpClientResponse(TcpClient client)
+        {
+            bool blnResult = false;
+            if (client == null)
+            {
+                LogFile.Write("TcpClient Object Error");
+                return blnResult;
+            }
+
+            byte[] buffer;
+            String incomingMessage = "";
+            NetworkStream stream = client.GetStream();
+            String StrLogData = "";
+            String StrInputData = "";
+
+
+            if (stream.CanRead)
+            {
+                buffer = new byte[client.ReceiveBufferSize];
+                int numBytesRead = 0;
+                try
+                {
+                    numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
+                }
+                catch
+                {
+                    LogFile.Write("Http Stream Read Error");
+                    return blnResult;
+                }
+
+                StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
+
+                byte[] bytesRead = new byte[numBytesRead];
+                Array.Copy(buffer, bytesRead, numBytesRead);
+                incomingMessage = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);//HTTP head + data
+                string[] strs = incomingMessage.Split("\n");
+                if((strs==null) || (strs.Length<2))
+                {
+                    LogFile.Write("Http Stream Data Error");
+                    return blnResult;
+                }
+
+                String StrType = "";
+                String StrPath = "";
+                String StrVar = "";
+                if (HttpHeadPase(strs[0], ref StrType, ref StrPath, ref StrVar))
+                {
+                    StrLogData += $"Type: {StrType}\n";
+                    StrLogData += $"Path: {StrPath}\n";
+                    StrLogData += $"Var: {StrVar}\n";
+                }
+                else
+                {
+                    LogFile.Write("Http Head Pase Error");
+                    return blnResult;
+                }
+
+                StrLogData += $"Input: {strs[strs.Length-1]}\n";//Input
+
+                String StrResult = "";
+                String HTTPStatusCode = "";
+                if(HttpBodyCreate(StrType, StrPath, ref StrResult))
+                {
+                    HTTPStatusCode = "HTTP/1.1 200 OK";
+                }
+                else
+                {
+                    HTTPStatusCode = "HTTP/1.1 404 Not Found";
+                }
+
+                stream.Write(
+                    Encoding.UTF8.GetBytes(
+                        HTTPStatusCode + Environment.NewLine
+                        + "Content-Type: " + "application / json; charset=UTF-8" + Environment.NewLine
+                        + "Content-Length: " + Encoding.UTF8.GetBytes(StrResult).Length + Environment.NewLine
+                        + Environment.NewLine
+                        + StrResult
+                        + Environment.NewLine + Environment.NewLine));
+
+                StrLogData += $"result: {StrResult}\n";
+                LogFile.Write(StrLogData);
+
+                blnResult = true ;
+
+            }
+            else
+            {
+                LogFile.Write("TcpClient Access Error");
+                return blnResult;
+            }
+
+            return blnResult;
+        }
+
+        public static bool HttpHeadPase(String StrData,ref String StrType, ref String StrPath, ref String StrVar)
+        {
+            bool blnResult = false;
+            if((StrData!=null)&&(StrData.Length>0))
+            {
+                //---
+                //HTTP head拆解
+                MatchCollection matches = Regex.Matches(StrData, @"(([\S])*?)\s+");//使用正則表達是用空格作為分隔
+                int i = 0;
+                String StrBuf = "";
+                foreach (Match match in matches)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            StrType = $"{match.Groups[1].Value}";
+                            break;
+                        case 1:
+                            StrPath = $"{match.Groups[1].Value}";
+                            break;
+                        case 2:
+                            StrVar = $"{match.Groups[1].Value}";
+                            break;
+                    }
+                    i++;
+                }
+                //---HTTP head拆解
+                blnResult = true;
+            }
+            else
+            {
+                blnResult = false;
+            }
+
+            return blnResult;
+        }
+
+        public static bool HttpBodyCreate(String StrType, String StrPath, ref String StrResult)
+        {
+            bool blnResult = false;
+            if((StrType.Length>0) && (StrPath.Length>0))
+            {
+                blnResult = true;
+                StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
+                NO++;
+            }
+            return blnResult;
         }
 
         //---
@@ -83,180 +266,6 @@ namespace CS_WinForms_SimpleHttpServer
             return port;
         }
         //---得到用戶IP和PORT
-
-        public void Start()
-        {
-            NO = 0;
-            try
-            {
-                this.blnRun = true;
-                this.listener.Start();
-            }
-            catch
-            {
-                this.blnRun = false;
-                this.listener = null;
-                return;
-            }
-
-            while (blnRun)
-            {
-                TcpClient client;
-                try
-                {
-                    client = this.listener.AcceptTcpClient();
-                    //ThreadPool.QueueUserWorkItem(ThreadProc, client);//https://stackoverflow.com/questions/5339782/how-do-i-get-tcplistener-to-accept-multiple-connections-and-work-with-each-one-i
-                }
-                catch
-                {
-                    if(blnRun)
-                    {
-                        LogFile.Write("Server Error & STOP");
-                    }
-                    else
-                    {
-                        LogFile.Write("Server STOP");
-                    }
-                    break;
-                }
-                byte[] buffer;
-                String incomingMessage = "";
-                NetworkStream stream = client.GetStream();
-                String StrLogData = "";
-                String StrInputData = "";
-                if (stream.CanRead)
-                {
-                    buffer = new byte[client.ReceiveBufferSize];
-                    int numBytesRead = 0;
-                    try
-                    {
-                        numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
-                    }
-                    catch
-                    {
-                        client = null;
-                        continue;
-                    }
-                    byte[] bytesRead = new byte[numBytesRead];
-                    Array.Copy(buffer, bytesRead, numBytesRead);
-                    StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
-                    incomingMessage = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);//HTTP head + data
-                    string[] strs = incomingMessage.Split("\n");
-                    //---
-                    //HTTP head拆解
-                    MatchCollection matches = Regex.Matches(strs[0], @"(([\S])*?)\s+");//使用政則表達是用空格作為分隔
-                    int i = 0;
-                    String StrBuf = "";
-                    foreach (Match match in matches)
-                    {
-                        switch(i)
-                        {
-                            case 0:
-                                StrBuf = $"Type: {match.Groups[1].Value}\n";
-                                break;
-                            case 1:
-                                StrBuf = $"Path: {match.Groups[1].Value}\n";
-                                break;
-                            case 2:
-                                StrBuf = $"Var: {match.Groups[1].Value}\n";
-                                break;
-                        }
-                        i++;
-                        StrLogData += StrBuf;
-                    }
-                    //---HTTP head拆解
-                    StrInputData = strs[strs.Length - 1];
-                    StrLogData += $"Input: {StrInputData}\n";
-                }
-
-                String result = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));               
-                //String result = String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO);
-                
-                NO++;
-
-                stream.Write(
-                    Encoding.UTF8.GetBytes(
-                        "HTTP/1.1 200 OK" + Environment.NewLine
-                        + "Content-Type: " + "application / json; charset=UTF-8" + Environment.NewLine
-                        + "Content-Length: " + Encoding.UTF8.GetBytes(result).Length + Environment.NewLine
-                        + Environment.NewLine
-                        + result
-                        + Environment.NewLine + Environment.NewLine));
-
-                StrLogData += $"result: {result}\n";
-                LogFile.Write(StrLogData);
-            }
-        }
-        private static void ThreadProc(object obj)
-        {
-            var client = (TcpClient)obj;
-            byte[] buffer;
-            String incomingMessage = "";
-            NetworkStream stream = client.GetStream();
-            String StrLogData = "";
-            String StrInputData = "";
-            if (stream.CanRead)
-            {
-                buffer = new byte[client.ReceiveBufferSize];
-                int numBytesRead = 0;
-                try
-                {
-                    numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
-                }
-                catch
-                {
-                    client = null;
-                    return;
-                }
-                byte[] bytesRead = new byte[numBytesRead];
-                Array.Copy(buffer, bytesRead, numBytesRead);
-                StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
-                incomingMessage = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);//HTTP head + data
-                string[] strs = incomingMessage.Split("\n");
-                //---
-                //HTTP head拆解
-                MatchCollection matches = Regex.Matches(strs[0], @"(([\S])*?)\s+");//使用政則表達是用空格作為分隔
-                int i = 0;
-                String StrBuf = "";
-                foreach (Match match in matches)
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            StrBuf = $"Type: {match.Groups[1].Value}\n";
-                            break;
-                        case 1:
-                            StrBuf = $"Path: {match.Groups[1].Value}\n";
-                            break;
-                        case 2:
-                            StrBuf = $"Var: {match.Groups[1].Value}\n";
-                            break;
-                    }
-                    i++;
-                    StrLogData += StrBuf;
-                }
-                //---HTTP head拆解
-                StrInputData = strs[strs.Length - 1];
-                StrLogData += $"Input: {StrInputData}\n";
-            }
-
-            String result = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
-            //String result = String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO);
-
-            NO++;
-
-            stream.Write(
-                Encoding.UTF8.GetBytes(
-                    "HTTP/1.1 200 OK" + Environment.NewLine
-                    + "Content-Type: " + "application / json; charset=UTF-8" + Environment.NewLine
-                    + "Content-Length: " + Encoding.UTF8.GetBytes(result).Length + Environment.NewLine
-                    + Environment.NewLine
-                    + result
-                    + Environment.NewLine + Environment.NewLine));
-
-            StrLogData += $"result: {result}\n";
-            LogFile.Write(StrLogData);
-        }
     }
 
     public class HttpServerThread

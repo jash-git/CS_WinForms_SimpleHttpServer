@@ -10,9 +10,8 @@ namespace CS_WinForms_SimpleHttpServer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "Ver : " + FileVersionInfo.GetVersionInfo(Assembly.
-                GetExecutingAssembly().Location).FileVersion + string.Format("Version {0}", FileVersionInfo.
-                GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString()); ;
+            this.Text = "SimpleHttpServer" + ";Ver : " + FileVersionInfo.GetVersionInfo(Assembly.
+                GetExecutingAssembly().Location).FileVersion ;
         }
 
         private void button1_Click(object sender, EventArgs e)
