@@ -288,9 +288,9 @@ namespace CS_WinForms_SimpleHttpServer
 
     public class HttpServerThread
     {
-        public static int Port;
-        public static HttpServer server=null;
-        public static Thread t;
+        public static HttpServer Server = null;
+        private static int Port;
+        private static Thread t;
         public static void Start(int port)
         {
             t = new Thread(Create);
@@ -301,16 +301,16 @@ namespace CS_WinForms_SimpleHttpServer
         public static void Create(object arg)//Run(object arg)
         {
             Port = (int)arg;
-            server = null;
-            server = new HttpServer(Port);
-            server.Start();
+            Server = null;
+            Server = new HttpServer(Port);
+            Server.Start();
         }
         public static void Stop()
         {
-            if(server != null)
+            if(Server != null)
             {
-                server.Stop();
-                server = null;
+                Server.Stop();
+                Server = null;
             }
         }
     }
