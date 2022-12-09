@@ -16,8 +16,7 @@ namespace CS_WinForms_SimpleHttpServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            HttpServerThread.Start(8001);
-            if (HttpServerThread.Server!=null)
+            if (HttpServerThread.Start(8001))
             {
                 button1.Enabled = false;
                 button2.Enabled = true;
@@ -31,8 +30,7 @@ namespace CS_WinForms_SimpleHttpServer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            HttpServerThread.Stop();
-            if (HttpServerThread.Server == null)
+            if (HttpServerThread.Stop())
             {
                 button1.Enabled = true;
                 button2.Enabled = false;

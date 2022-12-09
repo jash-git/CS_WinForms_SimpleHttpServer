@@ -288,15 +288,21 @@ namespace CS_WinForms_SimpleHttpServer
 
     public class HttpServerThread
     {
-        public static HttpServer Server = null;
+        private static HttpServer Server = null;
         private static int Port;
         private static Thread t;
-        public static void Start(int port)
+        public static bool Start(int port)
         {
+            bool blnResult = false;
             t = new Thread(Create);
             t.IsBackground = true;
             t.Start(port);
             Thread.Sleep(1000);
+            if (Server != null)
+            {
+                blnResult = Server.blnRun;
+            }
+            return blnResult;
         }
         public static void Create(object arg)//Run(object arg)
         {
@@ -305,13 +311,14 @@ namespace CS_WinForms_SimpleHttpServer
             Server = new HttpServer(Port);
             Server.Start();
         }
-        public static void Stop()
+        public static bool Stop()
         {
             if(Server != null)
             {
                 Server.Stop();
                 Server = null;
             }
+            return true;
         }
     }
 }
