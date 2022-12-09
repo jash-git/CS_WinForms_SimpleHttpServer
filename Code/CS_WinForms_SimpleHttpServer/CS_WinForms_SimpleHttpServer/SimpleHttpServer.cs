@@ -290,7 +290,15 @@ namespace CS_WinForms_SimpleHttpServer
     {
         public static int Port;
         public static HttpServer server=null;
-        public static void Run(object arg)
+        public static Thread t;
+        public static void Start()
+        {
+            t = new Thread(Create);
+            t.IsBackground = true;
+            t.Start(8001);
+            Thread.Sleep(1000);
+        }
+        public static void Create(object arg)//Run(object arg)
         {
             Port = (int)arg;
             server = null;

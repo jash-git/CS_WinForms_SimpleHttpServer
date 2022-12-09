@@ -16,11 +16,8 @@ namespace CS_WinForms_SimpleHttpServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Thread t = new Thread(HttpServerThread.Run);
-            t.IsBackground = true;
-            t.Start(8001);
-            Thread.Sleep(1000);
-            if(HttpServerThread.server!=null)
+            HttpServerThread.Start();
+            if (HttpServerThread.server!=null)
             {
                 button1.Enabled = false;
                 button2.Enabled = true;
