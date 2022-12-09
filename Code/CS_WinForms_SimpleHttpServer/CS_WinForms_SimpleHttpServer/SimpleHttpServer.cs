@@ -291,11 +291,11 @@ namespace CS_WinForms_SimpleHttpServer
         public static int Port;
         public static HttpServer server=null;
         public static Thread t;
-        public static void Start()
+        public static void Start(int port)
         {
             t = new Thread(Create);
             t.IsBackground = true;
-            t.Start(8001);
+            t.Start(port);
             Thread.Sleep(1000);
         }
         public static void Create(object arg)//Run(object arg)
