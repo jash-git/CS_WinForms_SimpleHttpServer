@@ -107,7 +107,7 @@ namespace CS_WinForms_SimpleHttpServer
          * 
          * 功能: 處理連線請求(實際API命令分析和對應資訊回饋)(ThreadPool Mode)，直接呼叫 HttpClientResponse
         ****************************************************************************/
-        public static void ClientThread(Object StateInfo)
+        public void ClientThread(Object StateInfo)
         {
             TcpClient client = (TcpClient)StateInfo;
             HttpClientResponse(client);
@@ -124,7 +124,7 @@ namespace CS_WinForms_SimpleHttpServer
          * 輸出:
          *     回復命令結果(true/false)        
          *****************************************************************************/
-        public static bool HttpClientResponse(TcpClient client)
+        public bool HttpClientResponse(TcpClient client)
         {
             bool blnResult = false;
             String StrType = "";//存放輸入資訊拆結果
@@ -263,7 +263,7 @@ namespace CS_WinForms_SimpleHttpServer
          *     StrPath - 呼叫API名稱
          *     StrVar - HTTP版本:1.0/1.1
          ****************************************************************************/
-        public static bool HttpHeadPase(String StrData,ref String StrType, ref String StrPath, ref String StrVar)
+        public bool HttpHeadPase(String StrData,ref String StrType, ref String StrPath, ref String StrVar)
         {
             bool blnResult = false;
             if((StrData!=null)&&(StrData.Length>0))
@@ -338,19 +338,19 @@ namespace CS_WinForms_SimpleHttpServer
         //---
         //得到用戶IP和PORT
         //參考: https://blog.51cto.com/yerik/493795
-        public static Socket GetSocket(TcpClient cln)
+        public Socket GetSocket(TcpClient cln)
         {
             Socket s = cln.Client;
             return s;
         }
 
-        public static string GetRemoteIP(TcpClient cln)
+        public string GetRemoteIP(TcpClient cln)
         {
             string ip = GetSocket(cln).RemoteEndPoint.ToString().Split(':')[0];
             return ip;
         }
 
-        public static int GetRemotePort(TcpClient cln)
+        public int GetRemotePort(TcpClient cln)
         {
             string temp = GetSocket(cln).RemoteEndPoint.ToString().Split(':')[1];
             int port = Convert.ToInt32(temp);
