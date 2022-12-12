@@ -15,15 +15,27 @@ using static System.Net.WebRequestMethods;
 
 namespace CS_WinForms_SimpleHttpServer
 {
+    /***********************************************************************
+     *  HttpServer 類別
+     *
+     *  實作所有 Http Server 基本服務框架(將TcpListener 封裝成簡易 Http class)
+     *  
+     *  函數: 
+     *      HttpServer - 建構子
+     *      Start - 底動監聽並在被存取時回應對應資訊
+     *      Stop - 停止監聽動作
+     *      HttpHeadPase - Http Head 分析
+     *      HttpBodyCreate - 產生對應回應資料(呼叫對應 HttpAPI)
+     ***********************************************************************/
     public class HttpServer
     {
         public bool blnRun;
         private TcpListener listener;
         private int intport;
-        private static int NO;
-
+        
         public HttpServer(int port)
         {
+            HttpAPI.Init();
             intport = port;
             try
             {
@@ -50,7 +62,6 @@ namespace CS_WinForms_SimpleHttpServer
 
         public void Start()
         {
-            NO = 0;
             try
             {              
                 this.blnRun = true;
@@ -313,12 +324,7 @@ namespace CS_WinForms_SimpleHttpServer
                 switch(StrPath)
                 {
                     case "/orderno":
-                        if(StrType=="get")
-                        {
-                            blnResult = true;
-                            StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
-                            NO++;
-                        }
+                        blnResult = HttpAPI.orderno(StrType, ref StrResult);
                         break;
                     default:
                         blnResult = false;
@@ -328,25 +334,6 @@ namespace CS_WinForms_SimpleHttpServer
             }
             return blnResult;
         }
-
-        //---
-        //單純只針對非英數字(中文字)部分轉Unicode編碼
-        static string StringToUnicode(string text)
-        {
-            //參考: https://www.cnblogs.com/sntetwt/p/11218087.html
-            string result = "";
-            for (int i = 0; i < text.Length; i++)
-            {
-                if ((int)text[i] > 32 && (int)text[i] < 127)
-                {
-                    result += text[i].ToString();
-                }
-                else
-                    result += string.Format("\\u{0:x4}", (int)text[i]);
-            }
-            return result;
-        }
-        //---單純只針對非英數字(中文字)部分轉Unicode編碼
 
         //---
         //得到用戶IP和PORT
@@ -456,6 +443,53 @@ namespace CS_WinForms_SimpleHttpServer
                 Server = null;
             }
             return true;
+        }
+    }
+
+    /***********************************************************************
+     *  HttpAPI 類別
+     *
+     *  實作所有對應API資料處理功能
+     *  
+     *  函數: Init() 初始化相關變數
+     ***********************************************************************/
+    public class HttpAPI
+    {
+        private static int NO;
+        public static void Init()
+        {
+            NO = 0;
+        }
+
+        //---
+        //單純只針對非英數字(中文字)部分轉Unicode編碼
+        private static string StringToUnicode(string text)
+        {
+            //參考: https://www.cnblogs.com/sntetwt/p/11218087.html
+            string result = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                if ((int)text[i] > 32 && (int)text[i] < 127)
+                {
+                    result += text[i].ToString();
+                }
+                else
+                    result += string.Format("\\u{0:x4}", (int)text[i]);
+            }
+            return result;
+        }
+        //---單純只針對非英數字(中文字)部分轉Unicode編碼
+
+        public static bool orderno(String StrType, ref String StrResult)
+        {
+            bool blnResult = false;
+            if (StrType == "get")
+            {
+                blnResult = true;
+                StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
+                NO++;
+            }
+            return blnResult;
         }
     }
 }
