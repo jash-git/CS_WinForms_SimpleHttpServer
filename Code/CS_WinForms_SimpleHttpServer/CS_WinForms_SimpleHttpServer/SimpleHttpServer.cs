@@ -27,8 +27,7 @@ namespace CS_WinForms_SimpleHttpServer
             intport = port;
             try
             {
-                IPAddress IPAddr = IPAddress.Parse("0.0.0.0");//所有介面監聽
-                this.listener = new TcpListener(IPAddr, port);
+                this.listener = new TcpListener(IPAddress.Any, port);
             }
             catch (Exception ex)
             {
@@ -55,7 +54,7 @@ namespace CS_WinForms_SimpleHttpServer
             {              
                 this.blnRun = true;
                 HttpServerThread.State = 1;
-                this.listener.Start();
+                this.listener.Start();//啟動監聽
                 LogFile.Write($"Server Start(Listen port:{intport})");
             }
             catch (Exception ex)
@@ -72,8 +71,9 @@ namespace CS_WinForms_SimpleHttpServer
                 TcpClient client;
                 try
                 {
-                    client = this.listener.AcceptTcpClient();
-                    HttpClientResponse(client);
+                    client = this.listener.AcceptTcpClient();//接受連線請求
+                    //ThreadPool.SetMinThreads(2, 2);//參考: https://test.nizarium.com/httpserver/
+                    HttpClientResponse(client);//ThreadPool.QueueUserWorkItem(new WaitCallback(ClientThread), client);//處理連線請求
                 }
                 catch (Exception ex)
                 {
@@ -90,9 +90,38 @@ namespace CS_WinForms_SimpleHttpServer
             }
         }
 
+        /****************************************************************************
+         * ClientThread
+         * 
+         * 功能: 處理連線請求(實際API命令分析和對應資訊回饋)(ThreadPool Mode)，直接呼叫 HttpClientResponse
+        ****************************************************************************/
+        public static void ClientThread(Object StateInfo)
+        {
+            TcpClient client = (TcpClient)StateInfo;
+            HttpClientResponse(client);
+        }
+
+        /****************************************************************************
+         * HttpClientResponse
+         * 
+         * 功能: 處理連線請求(實際API命令分析和對應資訊回饋)
+         * 
+         * 輸入:
+         *      client - 連線元件
+         * 
+         * 輸出:
+         *     回復命令結果(true/false)        
+         *****************************************************************************/
+
         public static bool HttpClientResponse(TcpClient client)
         {
             bool blnResult = false;
+            String StrType = "";//存放輸入資訊拆結果
+            String StrPath = "";
+            String StrVar = "";
+            String StrInput = "";
+            String StrLogData = "";//Log資訊占存
+
             if (client == null)
             {
                 LogFile.Write("Get TcpClient Object Error");
@@ -107,12 +136,12 @@ namespace CS_WinForms_SimpleHttpServer
                 LogFile.Write("Get TcpClient Stream Error");
                 return blnResult;
             }
-            String StrLogData = "";
-            String StrInputData = "";
 
 
             if (stream.CanRead)
             {
+                //---
+                //抓取此次連線所有輸入資訊
                 buffer = new byte[client.ReceiveBufferSize];
                 int numBytesRead = 0;
                 try
@@ -125,8 +154,6 @@ namespace CS_WinForms_SimpleHttpServer
                     return blnResult;
                 }
 
-                StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
-
                 byte[] bytesRead = new byte[numBytesRead];
                 Array.Copy(buffer, bytesRead, numBytesRead);
                 incomingMessage = Encoding.UTF8.GetString(bytesRead, 0, numBytesRead);//HTTP head + data
@@ -136,13 +163,12 @@ namespace CS_WinForms_SimpleHttpServer
                     LogFile.Write("TcpClient Stream Data Error");
                     return blnResult;
                 }
+                //---抓取此次連線所有輸入資訊
+
+                StrLogData = $"IP : {GetRemoteIP(client)}\n";//紀錄連線IP
 
                 //---
                 //拆解API輸入參數
-                String StrType = "";
-                String StrPath = "";
-                String StrVar = "";
-                String StrInput = "";
                 if (HttpHeadPase(strs[0], ref StrType, ref StrPath, ref StrVar))
                 {
                     StrLogData += $"Type: {StrType}\n";
@@ -156,8 +182,9 @@ namespace CS_WinForms_SimpleHttpServer
                 }
 
                 StrInput = strs[strs.Length - 1];//Input
-                StrLogData += $"Input: {StrInput}\n";
                 //---拆解API輸入參數
+
+                StrLogData += $"Input: {StrInput}\n";
 
                 //---
                 //產生API回應對應內容
@@ -190,7 +217,7 @@ namespace CS_WinForms_SimpleHttpServer
 
                 blnResult = true ;
 
-            }
+            }//if (stream.CanRead)
             else
             {
                 LogFile.Write("TcpClient Stream Access Error");
@@ -200,6 +227,21 @@ namespace CS_WinForms_SimpleHttpServer
             return blnResult;
         }
 
+        /****************************************************************************
+         * HttpHeadPase
+         * 
+         * 功能:
+         *     拆解命令格式
+         *     
+         * 輸入:
+         *     StrData 輸入字串
+         *     
+         * 輸出:
+         *     回復命令結果(true/false)
+         *     StrType - HTTP類型:get/post/delete/put
+         *     StrPath - 呼叫API名稱
+         *     StrVar - HTTP版本:1.0/1.1
+         ****************************************************************************/
         public static bool HttpHeadPase(String StrData,ref String StrType, ref String StrPath, ref String StrVar)
         {
             bool blnResult = false;
@@ -237,6 +279,22 @@ namespace CS_WinForms_SimpleHttpServer
             return blnResult;
         }
 
+        /****************************************************************************
+         * HttpBodyCreate
+         * 
+         * 功能:
+         *     產生API對應實際的回應資料
+         *     
+         * 輸入:
+         *     StrType - HTTP類型:get/post/delete/put
+         *     StrPath - 呼叫API名稱
+         *     StrVar - HTTP版本:1.0/1.1
+         *     StrInput - 呼叫對應API的輸入參數    
+         *     
+         * 輸出:
+         *     回復命令結果(true/false)
+         *     StrResult - 實際回應字串內容
+         ****************************************************************************/
         public static bool HttpBodyCreate(String StrType, String StrPath, String StrInput, ref String StrResult)
         {
             bool blnResult = false;
@@ -360,6 +418,7 @@ namespace CS_WinForms_SimpleHttpServer
 
             return blnResult;
         }
+
         public static void Init(object arg)//Run(object arg)
         {
             Port = (int)arg;
