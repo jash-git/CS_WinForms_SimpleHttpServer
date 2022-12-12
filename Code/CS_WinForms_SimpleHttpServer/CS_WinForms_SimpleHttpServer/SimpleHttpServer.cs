@@ -27,11 +27,13 @@ namespace CS_WinForms_SimpleHttpServer
             intport = port;
             try
             {
-                this.listener = new TcpListener(port);
+                IPAddress IPAddr = IPAddress.Parse("0.0.0.0");//所有介面監聽
+                this.listener = new TcpListener(IPAddr, port);
             }
-            catch
+            catch (Exception ex)
             {
                 this.listener = null;
+                LogFile.Write($"HttpServer Constructor Error:{ex.Message}");
             }
         }
 
@@ -56,12 +58,12 @@ namespace CS_WinForms_SimpleHttpServer
                 this.listener.Start();
                 LogFile.Write($"Server Start(Listen port:{intport})");
             }
-            catch
+            catch (Exception ex)
             {
                 this.blnRun = false;
                 HttpServerThread.State = 1;
                 this.listener = null;
-                LogFile.Write($"Server Start(Listen port:{intport}) Error");
+                LogFile.Write($"Server Start(Listen port:{intport}) Error:{ex.Message}");
                 return;
             }
 
@@ -73,19 +75,18 @@ namespace CS_WinForms_SimpleHttpServer
                     client = this.listener.AcceptTcpClient();
                     HttpClientResponse(client);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    if(blnRun)
+                    if (blnRun)
                     {
-                        LogFile.Write("Server Error");
+                        LogFile.Write($"Server Error:{ex.Message}");
                     }
                     else
                     {
-                        LogFile.Write("Server STOP");
+                        LogFile.Write($"Server STOP");
                         break;
                     }
                 }
-
             }
         }
 
@@ -118,7 +119,7 @@ namespace CS_WinForms_SimpleHttpServer
                 {
                     numBytesRead = stream.Read(buffer, 0, (int)client.ReceiveBufferSize);
                 }
-                catch
+                catch (Exception ex)
                 {
                     LogFile.Write("Http Stream Read Error");
                     return blnResult;
@@ -136,9 +137,12 @@ namespace CS_WinForms_SimpleHttpServer
                     return blnResult;
                 }
 
+                //---
+                //拆解API輸入參數
                 String StrType = "";
                 String StrPath = "";
                 String StrVar = "";
+                String StrInput = "";
                 if (HttpHeadPase(strs[0], ref StrType, ref StrPath, ref StrVar))
                 {
                     StrLogData += $"Type: {StrType}\n";
@@ -151,19 +155,26 @@ namespace CS_WinForms_SimpleHttpServer
                     return blnResult;
                 }
 
-                StrLogData += $"Input: {strs[strs.Length-1]}\n";//Input
+                StrInput = strs[strs.Length - 1];//Input
+                StrLogData += $"Input: {StrInput}\n";
+                //---拆解API輸入參數
 
+                //---
+                //產生API回應對應內容
                 String StrResult = "";
                 String HTTPStatusCode = "";
-                if(HttpBodyCreate(StrType, StrPath, ref StrResult))
+                if(HttpBodyCreate(StrType, StrPath,StrInput, ref StrResult))
                 {
                     HTTPStatusCode = "HTTP/1.1 200 OK";
                 }
                 else
                 {
-                    HTTPStatusCode = "HTTP/1.1 404 Not Found";
+                    HTTPStatusCode = "HTTP/1.1 403 Forbidden";
                 }
+                //---產生API回應對應內容
 
+                //---
+                //輸出API回應對應內容
                 stream.Write(
                     Encoding.UTF8.GetBytes(
                         HTTPStatusCode + Environment.NewLine
@@ -172,6 +183,7 @@ namespace CS_WinForms_SimpleHttpServer
                         + Environment.NewLine
                         + StrResult
                         + Environment.NewLine + Environment.NewLine));
+                //---產生API回應對應內容
 
                 StrLogData += $"result: {StrResult}\n";
                 LogFile.Write(StrLogData);
@@ -203,13 +215,13 @@ namespace CS_WinForms_SimpleHttpServer
                     switch (i)
                     {
                         case 0:
-                            StrType = $"{match.Groups[1].Value}";
+                            StrType = $"{match.Groups[1].Value}".ToLower();
                             break;
                         case 1:
-                            StrPath = $"{match.Groups[1].Value}";
+                            StrPath = $"{match.Groups[1].Value}".ToLower();
                             break;
                         case 2:
-                            StrVar = $"{match.Groups[1].Value}";
+                            StrVar = $"{match.Groups[1].Value}".ToLower();
                             break;
                     }
                     i++;
@@ -225,17 +237,20 @@ namespace CS_WinForms_SimpleHttpServer
             return blnResult;
         }
 
-        public static bool HttpBodyCreate(String StrType, String StrPath, ref String StrResult)
+        public static bool HttpBodyCreate(String StrType, String StrPath, String StrInput, ref String StrResult)
         {
             bool blnResult = false;
             if((StrType.Length>0) && (StrPath.Length>0))
             {
-                switch(StrType)
+                switch(StrPath)
                 {
-                    case "POST":
-                        blnResult = true;
-                        StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
-                        NO++;
+                    case "/orderno":
+                        if(StrType=="get")
+                        {
+                            blnResult = true;
+                            StrResult = StringToUnicode(String.Format("{{\"NO\":\"{0:0000}\",\"En_Name\":\"jash.liao\",\"CH_Name\":\"小廖\"}}", NO));
+                            NO++;
+                        }
                         break;
                     default:
                         blnResult = false;
@@ -250,7 +265,7 @@ namespace CS_WinForms_SimpleHttpServer
         //單純只針對非英數字(中文字)部分轉Unicode編碼
         static string StringToUnicode(string text)
         {
-            //https://www.cnblogs.com/sntetwt/p/11218087.html
+            //參考: https://www.cnblogs.com/sntetwt/p/11218087.html
             string result = "";
             for (int i = 0; i < text.Length; i++)
             {
@@ -266,7 +281,8 @@ namespace CS_WinForms_SimpleHttpServer
         //---單純只針對非英數字(中文字)部分轉Unicode編碼
 
         //---
-        //得到用戶IP和PORT ~https://blog.51cto.com/yerik/493795
+        //得到用戶IP和PORT
+        //參考: https://blog.51cto.com/yerik/493795
         public static Socket GetSocket(TcpClient cln)
         {
             Socket s = cln.Client;
@@ -288,12 +304,33 @@ namespace CS_WinForms_SimpleHttpServer
         //---得到用戶IP和PORT
     }
 
+    /***********************************************************************
+     *  HttpServerThread 類別
+     *
+     *  啟動/停止 HttpServer 並且載啟動不要咬住UI操作
+     *  
+     *  函數: Start() 啟動服務
+     *        Stop() 停止服務
+     *        Iint() 啟動服務變數初始化
+     ***********************************************************************/
     public class HttpServerThread
     {
         private static HttpServer Server = null;
         private static int Port;
         private static Thread t;
         public static int State;
+
+        /***********************************************************************
+         *  函數:Start()
+         *  
+         *  功能: 啟動HTTP服務
+         *  
+         *  輸入: 
+         *      port 該HTTP服務監聽埠
+         *      
+         *  輸出:
+         *      回復命令結果(true/false)
+         ***********************************************************************/
         public static bool Start(int port)
         {
             if(t!=null)
@@ -308,12 +345,13 @@ namespace CS_WinForms_SimpleHttpServer
 
             State = 0;
             bool blnResult = false;
-            t = new Thread(Create);
+            t = new Thread(Init);
             t.IsBackground = true;
             t.Start(port);
 
             do
             {
+                Thread.Sleep(100);
                 if (Server != null)
                 {
                     blnResult = Server.blnRun;
@@ -322,13 +360,25 @@ namespace CS_WinForms_SimpleHttpServer
 
             return blnResult;
         }
-        public static void Create(object arg)//Run(object arg)
+        public static void Init(object arg)//Run(object arg)
         {
             Port = (int)arg;
             Server = null;
             Server = new HttpServer(Port);
             Server.Start();
         }
+
+        /***********************************************************************
+         *  函數:Stop()
+         *  
+         *  功能: 停止HTTP服務
+         *  
+         *  輸入: 
+         *      無
+         *      
+         *  輸出:
+         *      回復命令結果(true/false)
+         ***********************************************************************/
         public static bool Stop()
         {
             if(Server != null)

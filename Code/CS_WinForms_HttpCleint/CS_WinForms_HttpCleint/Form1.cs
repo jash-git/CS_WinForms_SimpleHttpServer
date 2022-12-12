@@ -18,7 +18,7 @@ namespace CS_WinForms_HttpCleint
             TcpClient tcpClient=new TcpClient();
             try
             {
-                tcpClient.Connect("192.168.1.108", 8001);
+                tcpClient.Connect("127.0.0.1", 8001);
             }
             catch
             {
@@ -30,11 +30,11 @@ namespace CS_WinForms_HttpCleint
             {
 
                 // request line
-                networkStream.Write(Encoding.UTF8.GetBytes($"{comboBox1.SelectedItem.ToString()} /test/post.php HTTP/1.0\r\n"));
+                networkStream.Write(Encoding.UTF8.GetBytes($"{comboBox1.SelectedItem.ToString()} /orderno HTTP/1.0\r\n"));
 
                 String StrInput = (comboBox1.SelectedItem.ToString()=="POST") ? @"<methodCall><methodName>sycgsti.launcher</methodName><params><param><value><string>amFzaGxpYW8=</string></value></param></params></methodCall>":"";
                 // headers
-                networkStream.Write(Encoding.UTF8.GetBytes("Host: 192.168.1.108\r\n"));
+                networkStream.Write(Encoding.UTF8.GetBytes("Host: 127.0.0.1\r\n"));
                 networkStream.Write(Encoding.UTF8.GetBytes("Content-Type: text/xml\r\n"));
                 networkStream.Write(Encoding.UTF8.GetBytes($"Content-Length: {Encoding.UTF8.GetBytes(StrInput).Length}\r\n"));
                 networkStream.Write(Encoding.UTF8.GetBytes("\r\n"));
