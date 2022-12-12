@@ -27,12 +27,13 @@ namespace CS_WinForms_SimpleHttpServer
             intport = port;
             try
             {
-                this.listener = new TcpListener(IPAddress.Any, port);
+                //IPAddress IPAddr = IPAddress.Parse("0.0.0.0");//所有介面監聽
+                this.listener = new TcpListener(IPAddress.Any,port);//new TcpListener(IPAddr,port);
             }
             catch (Exception ex)
             {
                 this.listener = null;
-                LogFile.Write($"HttpServer Constructor Error:{ex.Message}");
+                LogFile.Write($"HttpServer Constructor Error:{ex.ToString()}");
             }
         }
 
@@ -62,7 +63,7 @@ namespace CS_WinForms_SimpleHttpServer
                 this.blnRun = false;
                 HttpServerThread.State = 1;
                 this.listener = null;
-                LogFile.Write($"Server Start(Listen port:{intport}) Error:{ex.Message}");
+                LogFile.Write($"Server Start(Listen port:{intport}) Error:{ex.ToString()}");
                 return;
             }
 
@@ -79,7 +80,7 @@ namespace CS_WinForms_SimpleHttpServer
                 {
                     if (blnRun)
                     {
-                        LogFile.Write($"Server Error:{ex.Message}");
+                        LogFile.Write($"Server Error:{ex.ToString()}");
                     }
                     else
                     {
@@ -112,7 +113,6 @@ namespace CS_WinForms_SimpleHttpServer
          * 輸出:
          *     回復命令結果(true/false)        
          *****************************************************************************/
-
         public static bool HttpClientResponse(TcpClient client)
         {
             bool blnResult = false;
@@ -130,10 +130,20 @@ namespace CS_WinForms_SimpleHttpServer
 
             byte[] buffer;
             String incomingMessage = "";
-            NetworkStream stream = client.GetStream();
+            NetworkStream stream = null;
+            try
+            {
+                stream = client.GetStream();
+            }
+            catch (Exception ex)
+            {
+                LogFile.Write($"Get TcpClient's NetworkStream Error:{ex.ToString()}");
+                return blnResult;
+            }
+            
             if (stream == null)
             {
-                LogFile.Write("Get TcpClient Stream Error");
+                LogFile.Write("Get TcpClient Error:NetworkStream NULL");
                 return blnResult;
             }
 
@@ -150,7 +160,7 @@ namespace CS_WinForms_SimpleHttpServer
                 }
                 catch (Exception ex)
                 {
-                    LogFile.Write("Http Stream Read Error");
+                    LogFile.Write($"TcpClient's NetworkStream Read Error:{ex.ToString()}");
                     return blnResult;
                 }
 
@@ -160,7 +170,7 @@ namespace CS_WinForms_SimpleHttpServer
                 string[] strs = incomingMessage.Split("\n");
                 if((strs==null) || (strs.Length<1))
                 {
-                    LogFile.Write("TcpClient Stream Data Error");
+                    LogFile.Write("TcpClient's NetworkStream Data Error");
                     return blnResult;
                 }
                 //---抓取此次連線所有輸入資訊
@@ -376,7 +386,7 @@ namespace CS_WinForms_SimpleHttpServer
         private static HttpServer Server = null;
         private static int Port;
         private static Thread t;
-        public static int State;
+        public static int State;//紀錄 HttpServer 運行狀態
 
         /***********************************************************************
          *  函數:Start()
@@ -404,17 +414,17 @@ namespace CS_WinForms_SimpleHttpServer
             State = 0;
             bool blnResult = false;
             t = new Thread(Init);
-            t.IsBackground = true;
+            t.IsBackground = true;//確保該執行序會在主程序關閉時跟著結束， 參考: https://learn.microsoft.com/zh-tw/dotnet/api/system.threading.thread.isbackground?view=net-7.0
             t.Start(port);
 
             do
             {
-                Thread.Sleep(100);
+                Thread.Sleep(10);//10ms 等待HttpServer啟動
                 if (Server != null)
                 {
-                    blnResult = Server.blnRun;
+                    blnResult = Server.blnRun;//取得HttpServer狀態
                 }
-            } while (State == 0);
+            } while (State == 0);//HttpServer狀態有效性防呆
 
             return blnResult;
         }

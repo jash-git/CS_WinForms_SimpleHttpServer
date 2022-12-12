@@ -44,6 +44,7 @@ namespace CS_WinForms_SimpleHttpServer
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            HttpServerThread.Stop();
             button1.Text = "Start";
             button2.Text = "Stop";
             button1.Enabled = true;
